@@ -1,0 +1,160 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Ecommerce API",
+    "version": "1.0.0",
+    "description": "API Rest para ecommerce de loja. Autenticação JWT obrigatória."
+  },
+  "paths": {
+    "/api/login/admin": {
+      "post": {
+        "summary": "Login administrador",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"type": "object", "properties": {"username": {"type": "string"}, "password": {"type": "string"}}, "required": ["username", "password"]}
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Login realizado", "content": {"application/json": {"schema": {"type": "object", "properties": {"token": {"type": "string"}}}}}},
+          "401": {"description": "Credenciais inválidas"}
+        }
+      }
+    },
+    "/api/login/attendant": {
+      "post": {
+        "summary": "Login atendente",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"type": "object", "properties": {"username": {"type": "string"}, "password": {"type": "string"}}, "required": ["username", "password"]}
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Login realizado", "content": {"application/json": {"schema": {"type": "object", "properties": {"token": {"type": "string"}}}}}},
+          "401": {"description": "Credenciais inválidas"}
+        }
+      }
+    },
+    "/api/product": {
+      "post": {
+        "summary": "Adicionar produto",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"type": "object", "properties": {"name": {"type": "string"}, "price": {"type": "number"}, "image": {"type": "string"}}, "required": ["name", "price"]}
+            }
+          }
+        },
+        "responses": {
+          "201": {"description": "Produto criado", "content": {"application/json": {"schema": {"type": "object", "properties": {"id": {"type": "integer"}, "name": {"type": "string"}, "price": {"type": "number"}, "image": {"type": "string"}}}}}},
+          "400": {"description": "Nome e preço obrigatórios"},
+          "401": {"description": "Token não fornecido"},
+          "403": {"description": "Token inválido"}
+        }
+      }
+    },
+    "/api/product/{id}/price": {
+      "put": {
+        "summary": "Atualizar preço do produto",
+        "security": [{"bearerAuth": []}],
+        "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"type": "object", "properties": {"price": {"type": "number"}}, "required": ["price"]}
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Preço atualizado", "content": {"application/json": {"schema": {"type": "object", "properties": {"id": {"type": "integer"}, "name": {"type": "string"}, "price": {"type": "number"}, "image": {"type": "string"}}}}}},
+          "404": {"description": "Produto não encontrado"},
+          "401": {"description": "Token não fornecido"},
+          "403": {"description": "Token inválido"}
+        }
+      }
+    },
+    "/api/product/{id}/image": {
+      "put": {
+        "summary": "Atualizar imagem do produto",
+        "security": [{"bearerAuth": []}],
+        "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"type": "object", "properties": {"image": {"type": "string"}}, "required": ["image"]}
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Imagem atualizada", "content": {"application/json": {"schema": {"type": "object", "properties": {"id": {"type": "integer"}, "name": {"type": "string"}, "price": {"type": "number"}, "image": {"type": "string"}}}}}},
+          "404": {"description": "Produto não encontrado"},
+          "401": {"description": "Token não fornecido"},
+          "403": {"description": "Token inválido"}
+        }
+      }
+    },
+    "/api/product/{id}": {
+      "delete": {
+        "summary": "Deletar produto",
+        "security": [{"bearerAuth": []}],
+        "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}],
+        "responses": {
+          "204": {"description": "Produto deletado"},
+          "404": {"description": "Produto não encontrado"},
+          "401": {"description": "Token não fornecido"},
+          "403": {"description": "Token inválido"}
+        }
+      }
+    },
+    "/api/product/search": {
+      "get": {
+        "summary": "Pesquisar produtos",
+        "security": [{"bearerAuth": []}],
+        "parameters": [{"name": "q", "in": "query", "required": true, "schema": {"type": "string"}}],
+        "responses": {
+          "200": {"description": "Lista de produtos encontrados", "content": {"application/json": {"schema": {"type": "array", "items": {"type": "object", "properties": {"id": {"type": "integer"}, "name": {"type": "string"}, "price": {"type": "number"}, "image": {"type": "string"}}}}}}},
+          "401": {"description": "Token não fornecido"},
+          "403": {"description": "Token inválido"}
+        }
+      }
+    },
+    "/api/cart/add": {
+      "post": {
+        "summary": "Adicionar produto ao carrinho",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"type": "object", "properties": {"productId": {"type": "integer"}, "quantity": {"type": "integer"}}, "required": ["productId", "quantity"]}
+            }
+          }
+        },
+        "responses": {
+          "201": {"description": "Produto adicionado ao carrinho", "content": {"application/json": {"schema": {"type": "object", "properties": {"productId": {"type": "integer"}, "quantity": {"type": "integer"}}}}}},
+          "404": {"description": "Produto não encontrado"},
+          "401": {"description": "Token não fornecido"},
+          "403": {"description": "Token inválido"}
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
