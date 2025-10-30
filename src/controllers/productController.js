@@ -1,13 +1,19 @@
 const { products } = require('../model/productModel');
 
+
+const generateUniqueId = (() => {
+  let lastId = 0;
+  return () => ++lastId;
+})();
+
 exports.addProduct = (req, res) => {
-  const { name, price, image } = req.body;
+  const { name, price } = req.body;
   if (!name || !price) {
     return res.status(400).json({ error: 'Nome e preço são obrigatórios' });
   }
-  const id = products.length + 1;
-  products.push({ id, name, price, image });
-  res.status(201).json({ id, name, price, image });
+  const id = generateUniqueId();
+  products.push({ id, name, price });
+  res.status(201).json({ id, name, price });
 };
 
 exports.updatePrice = (req, res) => {
@@ -19,14 +25,7 @@ exports.updatePrice = (req, res) => {
   res.json(product);
 };
 
-exports.updateImage = (req, res) => {
-  const { id } = req.params;
-  const { image } = req.body;
-  const product = products.find(p => p.id == id);
-  if (!product) return res.status(404).json({ error: 'Produto não encontrado' });
-  product.image = image;
-  res.json(product);
-};
+
 
 exports.deleteProduct = (req, res) => {
   const { id } = req.params;

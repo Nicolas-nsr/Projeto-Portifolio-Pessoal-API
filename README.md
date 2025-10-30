@@ -1,20 +1,28 @@
+
 # Ecommerce API
 
 API Rest para ecommerce de loja com autenticação JWT, banco de dados em memória, documentação Swagger e arquitetura em camadas.
 
 ## Funcionalidades
 - Login administrador
-- Login atendente
-- Adicionar produto
+- Adicionar produto (com id único)
 - Registro de preço do produto
-- Registro de imagem do produto
 - Deletar produto
 - Barra de pesquisa de produtos
 - Adicionar produtos ao carrinho
-- Progressão por pontuação
+- Finalizar pedido
 
 ## Autenticação
 A autenticação é feita via JWT e é obrigatória para acessar as funcionalidades da API.
+
+## Endpoints principais
+- `POST /api/login/admin` — Login do administrador
+- `POST /api/product` — Adicionar produto
+- `PUT /api/product/:id/price` — Atualizar preço do produto
+- `DELETE /api/product/:id` — Deletar produto
+- `GET /api/product/search?q=...` — Pesquisar produtos
+- `POST /api/cart/add` — Adicionar produto ao carrinho
+- `POST /api/cart/checkout` — Finalizar pedido
 
 ## Documentação
 A documentação dos endpoints está disponível via Swagger em `/swagger`.

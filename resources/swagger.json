@@ -6,6 +6,24 @@
     "description": "API Rest para ecommerce de loja. Autenticação JWT obrigatória."
   },
   "paths": {
+    "/api/admin/register": {
+      "post": {
+        "summary": "Criar usuário administrador",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"type": "object", "properties": {"username": {"type": "string"}, "password": {"type": "string"}}, "required": ["username", "password"]}
+            }
+          }
+        },
+        "responses": {
+          "201": {"description": "Usuário criado com sucesso", "content": {"application/json": {"schema": {"type": "object", "properties": {"mensagem": {"type": "string"}}}}}},
+          "400": {"description": "Usuário e senha obrigatórios"},
+          "409": {"description": "Usuário já existe"}
+        }
+      }
+    },
     "/api/login/admin": {
       "post": {
         "summary": "Login administrador",
@@ -23,20 +41,15 @@
         }
       }
     },
-    "/api/login/attendant": {
+    "/api/cart/checkout": {
       "post": {
-        "summary": "Login atendente",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {"type": "object", "properties": {"username": {"type": "string"}, "password": {"type": "string"}}, "required": ["username", "password"]}
-            }
-          }
-        },
+        "summary": "Finalizar pedido",
+        "security": [{"bearerAuth": []}],
         "responses": {
-          "200": {"description": "Login realizado", "content": {"application/json": {"schema": {"type": "object", "properties": {"token": {"type": "string"}}}}}},
-          "401": {"description": "Credenciais inválidas"}
+          "200": {"description": "Pedido finalizado com sucesso", "content": {"application/json": {"schema": {"type": "object", "properties": {"pedido": {"type": "array", "items": {"type": "object", "properties": {"produto": {"type": "object", "properties": {"id": {"type": "integer"}, "name": {"type": "string"}, "price": {"type": "number"}, "image": {"type": "string"}}}, "quantidade": {"type": "integer"}}}}, "mensagem": {"type": "string"}}}}}},
+          "400": {"description": "Carrinho vazio"},
+          "401": {"description": "Token não fornecido"},
+          "403": {"description": "Token inválido"}
         }
       }
     },
