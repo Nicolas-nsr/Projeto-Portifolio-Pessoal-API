@@ -1,173 +1,338 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Ecommerce API",
+    "title": "E-commerce API",
     "version": "1.0.0",
-    "description": "API Rest para ecommerce de loja. Autenticação JWT obrigatória."
+    "description": "API RESTful para gerenciamento de uma loja virtual com autenticação JWT"
   },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
   "paths": {
-    "/api/admin/register": {
+    "/users": {
       "post": {
-        "summary": "Criar usuário administrador",
+        "summary": "Criar novo usuário",
+        "operationId": "createUser",
+        "tags": ["👤 Usuários"],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {"type": "object", "properties": {"username": {"type": "string"}, "password": {"type": "string"}}, "required": ["username", "password"]}
+              "schema": { "$ref": "#/components/schemas/User" }
             }
           }
         },
         "responses": {
-          "201": {"description": "Usuário criado com sucesso", "content": {"application/json": {"schema": {"type": "object", "properties": {"mensagem": {"type": "string"}}}}}},
-          "400": {"description": "Usuário e senha obrigatórios"},
-          "409": {"description": "Usuário já existe"}
+          "201": { "description": "Usuário criado com sucesso" },
+          "400": { "description": "Erro de validação" }
         }
       }
     },
-    "/api/login/admin": {
-      "post": {
-        "summary": "Login administrador",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {"type": "object", "properties": {"username": {"type": "string"}, "password": {"type": "string"}}, "required": ["username", "password"]}
-            }
-          }
-        },
-        "responses": {
-          "200": {"description": "Login realizado", "content": {"application/json": {"schema": {"type": "object", "properties": {"token": {"type": "string"}}}}}},
-          "401": {"description": "Credenciais inválidas"}
-        }
-      }
-    },
-    "/api/cart/checkout": {
-      "post": {
-        "summary": "Finalizar pedido",
-        "security": [{"bearerAuth": []}],
-        "responses": {
-          "200": {"description": "Pedido finalizado com sucesso", "content": {"application/json": {"schema": {"type": "object", "properties": {"pedido": {"type": "array", "items": {"type": "object", "properties": {"produto": {"type": "object", "properties": {"id": {"type": "integer"}, "name": {"type": "string"}, "price": {"type": "number"}, "image": {"type": "string"}}}, "quantidade": {"type": "integer"}}}}, "mensagem": {"type": "string"}}}}}},
-          "400": {"description": "Carrinho vazio"},
-          "401": {"description": "Token não fornecido"},
-          "403": {"description": "Token inválido"}
-        }
-      }
-    },
-    "/api/product": {
-      "post": {
-        "summary": "Adicionar produto",
-        "security": [{"bearerAuth": []}],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {"type": "object", "properties": {"name": {"type": "string"}, "price": {"type": "number"}, "image": {"type": "string"}}, "required": ["name", "price"]}
-            }
-          }
-        },
-        "responses": {
-          "201": {"description": "Produto criado", "content": {"application/json": {"schema": {"type": "object", "properties": {"id": {"type": "integer"}, "name": {"type": "string"}, "price": {"type": "number"}, "image": {"type": "string"}}}}}},
-          "400": {"description": "Nome e preço obrigatórios"},
-          "401": {"description": "Token não fornecido"},
-          "403": {"description": "Token inválido"}
-        }
-      }
-    },
-    "/api/product/{id}/price": {
-      "put": {
-        "summary": "Atualizar preço do produto",
-        "security": [{"bearerAuth": []}],
-        "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {"type": "object", "properties": {"price": {"type": "number"}}, "required": ["price"]}
-            }
-          }
-        },
-        "responses": {
-          "200": {"description": "Preço atualizado", "content": {"application/json": {"schema": {"type": "object", "properties": {"id": {"type": "integer"}, "name": {"type": "string"}, "price": {"type": "number"}, "image": {"type": "string"}}}}}},
-          "404": {"description": "Produto não encontrado"},
-          "401": {"description": "Token não fornecido"},
-          "403": {"description": "Token inválido"}
-        }
-      }
-    },
-    "/api/product/{id}/image": {
-      "put": {
-        "summary": "Atualizar imagem do produto",
-        "security": [{"bearerAuth": []}],
-        "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {"type": "object", "properties": {"image": {"type": "string"}}, "required": ["image"]}
-            }
-          }
-        },
-        "responses": {
-          "200": {"description": "Imagem atualizada", "content": {"application/json": {"schema": {"type": "object", "properties": {"id": {"type": "integer"}, "name": {"type": "string"}, "price": {"type": "number"}, "image": {"type": "string"}}}}}},
-          "404": {"description": "Produto não encontrado"},
-          "401": {"description": "Token não fornecido"},
-          "403": {"description": "Token inválido"}
-        }
-      }
-    },
-    "/api/product/{id}": {
-      "delete": {
-        "summary": "Deletar produto",
-        "security": [{"bearerAuth": []}],
-        "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "integer"}}],
-        "responses": {
-          "204": {"description": "Produto deletado"},
-          "404": {"description": "Produto não encontrado"},
-          "401": {"description": "Token não fornecido"},
-          "403": {"description": "Token inválido"}
-        }
-      }
-    },
-    "/api/product/search": {
+    "/users/{id}": {
       "get": {
-        "summary": "Pesquisar produtos",
-        "security": [{"bearerAuth": []}],
-        "parameters": [{"name": "q", "in": "query", "required": true, "schema": {"type": "string"}}],
+        "summary": "Obter dados de um usuário",
+        "operationId": "getUser",
+        "tags": ["👤 Usuários"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "example": "123" } }
+        ],
         "responses": {
-          "200": {"description": "Lista de produtos encontrados", "content": {"application/json": {"schema": {"type": "array", "items": {"type": "object", "properties": {"id": {"type": "integer"}, "name": {"type": "string"}, "price": {"type": "number"}, "image": {"type": "string"}}}}}}},
-          "401": {"description": "Token não fornecido"},
-          "403": {"description": "Token inválido"}
+          "200": {
+            "description": "Dados do usuário",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/User" } } }
+          },
+          "404": { "description": "Usuário não encontrado" }
+        }
+      },
+      "put": {
+        "summary": "Atualizar dados de um usuário",
+        "operationId": "updateUser",
+        "tags": ["👤 Usuários"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "example": "123" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/User" } } }
+        },
+        "responses": {
+          "200": { "description": "Usuário atualizado com sucesso" },
+          "400": { "description": "Erro de validação" }
+        }
+      },
+      "delete": {
+        "summary": "Remover usuário",
+        "operationId": "deleteUser",
+        "tags": ["👤 Usuários"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "example": "123" } }
+        ],
+        "responses": {
+          "200": { "description": "Usuário removido com sucesso" },
+          "404": { "description": "Usuário não encontrado" }
         }
       }
     },
-    "/api/cart/add": {
+    "/login": {
       "post": {
-        "summary": "Adicionar produto ao carrinho",
-        "security": [{"bearerAuth": []}],
+        "summary": "Autenticação de usuário (JWT)",
+        "operationId": "login",
+        "tags": ["👤 Usuários"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Login" } } }
+        },
+        "responses": {
+          "200": {
+            "description": "Login bem-sucedido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "token": { "type": "string", "example": "jwt.token.here" } }
+                }
+              }
+            }
+          },
+          "401": { "description": "Credenciais inválidas" }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "summary": "Listar produtos (com filtros e paginação)",
+        "tags": ["🛒 Produtos e Categorias"],
+        "parameters": [
+          { "name": "category", "in": "query", "schema": { "type": "string" }, "description": "Filtrar por categoria" },
+          { "name": "page", "in": "query", "schema": { "type": "integer" }, "description": "Página" },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" }, "description": "Limite por página" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de produtos",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Product" } } } }
+          }
+        }
+      },
+      "post": {
+        "summary": "Adicionar produto (somente admin)",
+        "tags": ["🛒 Produtos e Categorias"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Product" } } }
+        },
+        "responses": {
+          "201": { "description": "Produto criado com sucesso" },
+          "400": { "description": "Erro de validação" }
+        }
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "summary": "Detalhes de um produto",
+        "tags": ["🛒 Produtos e Categorias"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "example": "123" } }
+        ],
+        "responses": {
+          "200": { "description": "Produto encontrado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Product" } } } },
+          "404": { "description": "Produto não encontrado" }
+        }
+      },
+      "put": {
+        "summary": "Atualizar produto",
+        "tags": ["🛒 Produtos e Categorias"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Product" } } }
+        },
+        "responses": { "200": { "description": "Produto atualizado" } }
+      },
+      "delete": {
+        "summary": "Remover produto",
+        "tags": ["🛒 Produtos e Categorias"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Produto removido" } }
+      }
+    },
+    "/categories": {
+      "get": {
+        "summary": "Listar categorias",
+        "tags": ["🛒 Produtos e Categorias"],
+        "responses": {
+          "200": {
+            "description": "Lista de categorias",
+            "content": { "application/json": { "schema": { "type": "array", "items": { "type": "string" } } } }
+          }
+        }
+      }
+    },
+    "/cart": {
+      "post": {
+        "summary": "Criar ou recuperar carrinho",
+        "tags": ["🧺 Carrinho de compras"],
+        "responses": { "200": { "description": "Carrinho criado ou recuperado" } }
+      },
+      "get": {
+        "summary": "Listar conteúdo do carrinho",
+        "tags": ["🧺 Carrinho de compras"],
+        "responses": {
+          "200": { "description": "Conteúdo do carrinho", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Cart" } } } }
+        }
+      }
+    },
+    "/cart/items": {
+      "post": {
+        "summary": "Adicionar item ao carrinho",
+        "tags": ["🧺 Carrinho de compras"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CartItem" } } }
+        },
+        "responses": {
+          "201": { "description": "Item adicionado com sucesso" },
+          "400": { "description": "Erro de validação" }
+        }
+      }
+    },
+    "/cart/items/{id}": {
+      "put": {
+        "summary": "Atualizar quantidade de item",
+        "tags": ["🧺 Carrinho de compras"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CartItem" } } }
+        },
+        "responses": {
+          "200": { "description": "Quantidade atualizada" },
+          "404": { "description": "Item não encontrado" }
+        }
+      },
+      "delete": {
+        "summary": "Remover item do carrinho",
+        "tags": ["🧺 Carrinho de compras"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Item removido" },
+          "404": { "description": "Item não encontrado" }
+        }
+      }
+    },
+    "/orders": {
+      "post": {
+        "summary": "Criar pedido a partir do carrinho",
+        "tags": ["📦 Pedidos"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CreateOrderRequest" } } }
+        },
+        "responses": {
+          "201": { "description": "Pedido criado com sucesso" },
+          "400": { "description": "Erro na criação do pedido" }
+        }
+      },
+      "get": {
+        "summary": "Listar pedidos do usuário",
+        "tags": ["📦 Pedidos"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Lista de pedidos", "content": { "application/json": { "schema": { "type": "array", "items": { "$ref": "#/components/schemas/Order" } } } } }
+        }
+      }
+    },
+    "/orders/{id}": {
+      "get": {
+        "summary": "Ver detalhes do pedido",
+        "tags": ["📦 Pedidos"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Detalhes do pedido", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Order" } } } },
+          "404": { "description": "Pedido não encontrado" }
+        }
+      }
+    },
+    "/orders/{id}/status": {
+      "put": {
+        "summary": "Atualizar status (somente admin)",
+        "tags": ["📦 Pedidos"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {"type": "object", "properties": {"productId": {"type": "integer"}, "quantity": {"type": "integer"}}, "required": ["productId", "quantity"]}
+              "schema": {
+                "type": "object",
+                "properties": { "status": { "type": "string", "enum": ["pendente", "pago", "enviado", "entregue", "cancelado"] } },
+                "required": ["status"]
+              }
             }
           }
         },
+        "responses": { "200": { "description": "Status atualizado com sucesso" } }
+      }
+    },
+    "/payments": {
+      "post": {
+        "summary": "Iniciar pagamento",
+        "tags": ["💳 Pagamentos"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CreatePaymentRequest" } } }
+        },
+        "responses": { "201": { "description": "Pagamento iniciado" } }
+      }
+    },
+    "/payments/{id}": {
+      "get": {
+        "summary": "Consultar status de pagamento",
+        "tags": ["💳 Pagamentos"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
         "responses": {
-          "201": {"description": "Produto adicionado ao carrinho", "content": {"application/json": {"schema": {"type": "object", "properties": {"productId": {"type": "integer"}, "quantity": {"type": "integer"}}}}}},
-          "404": {"description": "Produto não encontrado"},
-          "401": {"description": "Token não fornecido"},
-          "403": {"description": "Token inválido"}
+          "200": { "description": "Status do pagamento", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Payment" } } } },
+          "404": { "description": "Pagamento não encontrado" }
         }
       }
     }
   },
   "components": {
     "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
-      }
+      "bearerAuth": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
+    },
+    "schemas": {
+      "User": { "type": "object", "properties": { "id": { "type": "string" }, "name": { "type": "string" }, "email": { "type": "string" }, "password": { "type": "string" } } },
+      "Login": { "type": "object", "properties": { "email": { "type": "string" }, "password": { "type": "string" } } },
+      "Product": { "type": "object", "properties": { "id": { "type": "string" }, "name": { "type": "string" }, "price": { "type": "number" }, "stock": { "type": "integer" }, "category": { "type": "string" } } },
+      "Cart": { "type": "object", "properties": { "id": { "type": "string" }, "items": { "type": "array", "items": { "$ref": "#/components/schemas/CartItem" } } } },
+      "CartItem": { "type": "object", "properties": { "productId": { "type": "string" }, "quantity": { "type": "integer" } } },
+      "CreateOrderRequest": { "type": "object", "properties": { "cartId": { "type": "string" } } },
+      "Order": { "type": "object", "properties": { "id": { "type": "string" }, "status": { "type": "string" }, "total": { "type": "number" }, "items": { "type": "array", "items": { "$ref": "#/components/schemas/CartItem" } } } },
+      "CreatePaymentRequest": { "type": "object", "properties": { "orderId": { "type": "string" }, "method": { "type": "string" }, "amount": { "type": "number" } } },
+      "Payment": { "type": "object", "properties": { "id": { "type": "string" }, "orderId": { "type": "string" }, "method": { "type": "string" }, "status": { "type": "string" }, "amount": { "type": "number" } } }
     }
   }
 }

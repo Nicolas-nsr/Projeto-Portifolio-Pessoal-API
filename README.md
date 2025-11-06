@@ -1,40 +1,111 @@
+🛍️ E-commerce API
 
-# Ecommerce API
+API RESTful para gerenciamento completo de uma loja virtual com autenticação JWT, documentação Swagger e arquitetura em camadas.
+Inclui operações para usuários, produtos, categorias, carrinho, pedidos e pagamentos.
 
-API Rest para ecommerce de loja com autenticação JWT, banco de dados em memória, documentação Swagger e arquitetura em camadas.
+🚀 Funcionalidades Principais
 
-## Funcionalidades
-- Login administrador
-- Adicionar produto (com id único)
-- Registro de preço do produto
-- Deletar produto
-- Barra de pesquisa de produtos
-- Adicionar produtos ao carrinho
-- Finalizar pedido
+👤 Cadastro e autenticação de usuários (JWT)
 
-## Autenticação
-A autenticação é feita via JWT e é obrigatória para acessar as funcionalidades da API.
+🛒 Gerenciamento de produtos e categorias
 
-## Endpoints principais
-- `POST /api/login/admin` — Login do administrador
-- `POST /api/product` — Adicionar produto
-- `PUT /api/product/:id/price` — Atualizar preço do produto
-- `DELETE /api/product/:id` — Deletar produto
-- `GET /api/product/search?q=...` — Pesquisar produtos
-- `POST /api/cart/add` — Adicionar produto ao carrinho
-- `POST /api/cart/checkout` — Finalizar pedido
+🧺 Carrinho de compras persistente
 
-## Documentação
-A documentação dos endpoints está disponível via Swagger em `/swagger`.
+📦 Criação e controle de pedidos
 
-## Estrutura
-- `src/routes`: Rotas da API
-- `src/controllers`: Lógica dos endpoints
-- `src/service`: Regras de negócio
-- `src/model`: Modelos de dados
-- `resources`: Documentação Swagger
+💳 Processamento e consulta de pagamentos
 
-## Como rodar
-1. Instale as dependências: `npm install`
-2. Inicie o servidor: `npm start`
-3. Acesse a documentação: [http://localhost:3000/swagger](http://localhost:3000/swagger)
+🔐 Controle de acesso (usuário comum x administrador)
+
+🧾 Documentação interativa via Swagger UI
+
+🔐 Autenticação
+
+A autenticação é feita com JWT (JSON Web Token).
+Para acessar endpoints protegidos, envie o token no header:
+
+Authorization: Bearer <seu_token_jwt>
+
+📡 Endpoints Principais
+👤 Usuários
+Método	Endpoint	Descrição
+POST	/users	Criar novo usuário
+GET	/users/{id}	Obter dados do usuário
+PUT	/users/{id}	Atualizar dados do usuário
+DELETE	/users/{id}	Remover conta
+POST	/login	Autenticar usuário (JWT)
+🛒 Produtos e Categorias
+Método	Endpoint	Descrição
+GET	/products	Listar produtos (filtros e paginação)
+GET	/products/{id}	Obter detalhes de um produto
+POST	/products	Adicionar novo produto (somente admin)
+PUT	/products/{id}	Atualizar produto
+DELETE	/products/{id}	Remover produto
+GET	/categories	Listar categorias disponíveis
+🧺 Carrinho de Compras
+Método	Endpoint	Descrição
+POST	/cart	Criar ou recuperar carrinho
+GET	/cart	Listar conteúdo do carrinho
+POST	/cart/items	Adicionar item ao carrinho
+PUT	/cart/items/{id}	Atualizar quantidade de item
+DELETE	/cart/items/{id}	Remover item do carrinho
+📦 Pedidos
+Método	Endpoint	Descrição
+POST	/orders	Criar pedido a partir do carrinho
+GET	/orders	Listar pedidos do usuário autenticado
+GET	/orders/{id}	Detalhar um pedido específico
+PUT	/orders/{id}/status	Atualizar status (somente admin)
+💳 Pagamentos
+Método	Endpoint	Descrição
+POST	/payments	Iniciar pagamento de um pedido
+GET	/payments/{id}	Consultar status do pagamento
+🧱 Estrutura do Projeto
+src/
+├── routes/        # Definição das rotas da API
+├── controllers/   # Lógica dos endpoints (camada de controle)
+├── services/      # Regras de negócio
+├── models/        # Estruturas e entidades da aplicação
+├── middleware/    # Autenticação e validações
+└── config/        # Configurações gerais (JWT, banco, etc.)
+
+resources/
+└── swagger/       # Documentação Swagger (swagger.json)
+
+🧾 Documentação
+
+Acesse a documentação interativa pelo Swagger UI:
+
+👉 http://localhost:3000/swagger
+
+🧰 Como Rodar o Projeto
+
+Instale as dependências
+
+npm install
+
+
+Inicie o servidor
+
+npm start
+
+
+Acesse a API
+
+http://localhost:3000
+
+
+Visualize a documentação Swagger
+
+http://localhost:3000/swagger
+
+🧪 Tecnologias Utilizadas
+
+Node.js / Express
+
+JWT (JSON Web Token)
+
+Swagger / OpenAPI 3.0
+
+Arquitetura em camadas (Controller → Service → Model)
+
+Banco em memória (mock)
